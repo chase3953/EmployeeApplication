@@ -1,0 +1,9 @@
+c:\users\bdarbonne013491\documents\visual studio 2015\Projects\EmployerApplication\ConfigurationHelper\bin\Debug\ConfigurationHelper.dll
+c:\users\bdarbonne013491\documents\visual studio 2015\Projects\EmployerApplication\ConfigurationHelper\bin\Debug\ConfigurationHelper.pdb
+c:\users\bdarbonne013491\documents\visual studio 2015\Projects\EmployerApplication\ConfigurationHelper\obj\Debug\ConfigurationHelper.csprojResolveAssemblyReference.cache
+c:\users\bdarbonne013491\documents\visual studio 2015\Projects\EmployerApplication\ConfigurationHelper\obj\Debug\ConfigurationHelper.dll
+c:\users\bdarbonne013491\documents\visual studio 2015\Projects\EmployerApplication\ConfigurationHelper\obj\Debug\ConfigurationHelper.pdb
+C:\Users\pmartone002261\Documents\Visual Studio 2015\Projects\EmployeeApplication\ConfigurationHelper\bin\Debug\ConfigurationHelper.dll
+C:\Users\pmartone002261\Documents\Visual Studio 2015\Projects\EmployeeApplication\ConfigurationHelper\bin\Debug\ConfigurationHelper.pdb
+C:\Users\pmartone002261\Documents\Visual Studio 2015\Projects\EmployeeApplication\ConfigurationHelper\obj\Debug\ConfigurationHelper.dll
+C:\Users\pmartone002261\Documents\Visual Studio 2015\Projects\EmployeeApplication\ConfigurationHelper\obj\Debug\ConfigurationHelper.pdb
