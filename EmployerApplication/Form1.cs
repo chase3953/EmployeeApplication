@@ -55,7 +55,7 @@ namespace EmployerApplication
 
         private void DgvEmployeePhones_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            ///////////////////////////////////////
+            
         }
 
         private void DgvEmployee_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)

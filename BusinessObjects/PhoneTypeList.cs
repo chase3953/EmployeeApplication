@@ -46,7 +46,9 @@ namespace BusinessObjects
             database.Command.CommandType = System.Data.CommandType.StoredProcedure;
             database.Command.CommandText = "tblPhoneTypeGetAll";
             DataTable dt = database.ExecuteQuery();
-
+            PhoneType blank = new PhoneType();
+            blank.Type = "Select a Phone Type";
+            _List.Add(blank);
             foreach (DataRow dr in dt.Rows)
             {
                 PhoneType e = new PhoneType();

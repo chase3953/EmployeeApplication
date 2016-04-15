@@ -211,7 +211,7 @@ namespace BusinessObjects
         public bool IsSavable()
         {
             bool result = false;
-            if (base.IsDirty == true && IsValid() == true)
+            if (base.IsDirty == true && IsValid() == true || (Phones.IsSavable() == true))
             {
                 result = true;
             }
@@ -230,7 +230,7 @@ namespace BusinessObjects
             {
                 result = Delete(database);
             }
-            else if (base.IsNew == false && IsSavable() == true)
+            else if (base.IsNew == false && IsValid() == true && IsDirty == true)
             {
                 result = Update(database);
             }
@@ -242,11 +242,8 @@ namespace BusinessObjects
             //SAVE THE CHILDREN
             if (result == true && _Phones != null && _Phones.IsSavable() == true)
             {
-                result = Phones.Save(database);
+                result = Phones.Save(database, base.Id);
             }
-
-
-
             if (result == true)
             {
                 database.EndTransaction();

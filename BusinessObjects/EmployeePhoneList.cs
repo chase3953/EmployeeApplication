@@ -61,14 +61,14 @@ namespace BusinessObjects
 
             return this;
         }
-        public bool Save(Database database)
+        public bool Save(Database database, Guid parentId)
         {
             bool result = false;
             foreach (EmployeePhone ePhone in _List)
             {
                 if (ePhone.IsSavable() == true)
                 {
-                    ePhone.Save(database);
+                    ePhone.Save(database, parentId);
                     if (ePhone.IsNew == false)
                     {
                         result = true;

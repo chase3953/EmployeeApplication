@@ -123,14 +123,6 @@
       <Project>{6c328f01-ee59-43be-866a-7a846dbe5558}</Project>
       <Name>BusinessObjects</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ConfigurationHelper\ConfigurationHelper.csproj">
-      <Project>{23a7eb09-36c2-4a76-b525-729d5858be9e}</Project>
-      <Name>ConfigurationHelper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DatabaseHelper\DatabaseHelper.csproj">
-      <Project>{30a08558-cb03-43e5-810e-6e2e3c6396c4}</Project>
-      <Name>DatabaseHelper</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

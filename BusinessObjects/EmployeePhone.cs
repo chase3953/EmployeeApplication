@@ -174,6 +174,10 @@ namespace BusinessObjects
             {
                 result = false;
             }
+            if (_PhoneTypeID == null || _PhoneTypeID == Guid.Empty)
+            {
+                result = false;
+            }
             if (_Phone.Length > 20)
             {
                 result = false;
@@ -219,8 +223,9 @@ namespace BusinessObjects
             }
             return result;
         }
-        public EmployeePhone Save(Database database)
+        public EmployeePhone Save(Database database, Guid parentId)
         {
+            _EmployeeId = parentId;
             bool result = true;
             //Database database = new Database("Employer");
             if (base.IsNew == true && IsSavable())

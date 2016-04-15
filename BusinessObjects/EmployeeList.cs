@@ -54,11 +54,15 @@ namespace BusinessObjects
                 e.IsNew = false;
                 e.IsDirty = false;
                 e.Savable += Employee_Savable;
+                e.Phones.Savable += Phones_Savable;
                 _List.Add(e);
             }
 
             return this;
         }
+
+       
+
         public EmployeeList Save()
         {
             foreach (Employee em in _List)
@@ -78,11 +82,17 @@ namespace BusinessObjects
             e.NewObject = new Employee();
             Employee employee = (Employee)e.NewObject;
             employee.Savable += Employee_Savable;
+            employee.Phones.Savable += Phones_Savable;
         }
 
         private void Employee_Savable(SavableEventArgs e)
         {
             RaiseEvent(e);
+        }
+
+        private void Phones_Savable(SavableEventArgs e)
+        {
+             RaiseEvent(e);
         }
         #endregion
     }
