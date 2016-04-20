@@ -8,80 +8,29 @@ using DatabaseHelper;
 
 namespace BusinessObjects
 {
-    public class Employee : HeaderData
+    public class EmailType : HeaderData
     {
-        //
-        //Check the end of the Insert()
-        //
-
         #region Private Members
-        private String _FirstName = String.Empty;
-        private String _LastName = String.Empty;
-        private EmployeePhoneList _Phones = null;
-        private EmployeeEmailList _Emails = null;
+        private String _Type = String.Empty;
         #endregion
 
         #region Public Properties
-        public String FirstName
+        public string Type
         {
             get
             {
-                return _FirstName;
+                return _Type;
             }
             set
             {
-                if (_FirstName != value)
+                if (_Type != value)
                 {
-                    _FirstName = value;
+                    _Type = value;
                     base.IsDirty = true;
                     bool Savable = IsSavable();
                     SavableEventArgs e = new SavableEventArgs(Savable);
                     RaiseEvent(e);
                 }
-            }
-        }
-        public String LastName
-        {
-            get
-            {
-                return _LastName;
-            }
-            set
-            {
-                if (_LastName != value)
-                {
-                    _LastName = value;
-                    base.IsDirty = true;
-                    bool Savable = IsSavable();
-                    SavableEventArgs e = new SavableEventArgs(Savable);
-                    RaiseEvent(e);
-                }
-            }
-        }
-        public EmployeePhoneList Phones
-        {
-            get
-            {
-                //LAZY LOADING
-                if (_Phones == null)
-                {
-                    _Phones = new EmployeePhoneList();
-                    _Phones = _Phones.GetByEmployeeId(base.Id);
-                }
-                return _Phones;
-            }
-        }
-        public EmployeeEmailList Emails
-        {
-            get
-            {
-                //LAZY LOADING
-                if (_Emails == null)
-                {
-                    _Emails = new EmployeeEmailList();
-                    _Emails = _Emails.GetByEmployeeId(base.Id);
-                }
-                return _Emails;
             }
         }
         #endregion
@@ -96,13 +45,12 @@ namespace BusinessObjects
             {
                 database.Command.Parameters.Clear();
                 database.Command.CommandType = CommandType.StoredProcedure;
-                database.Command.CommandText = "tblEmployeeINSERT";
-                database.Command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = _FirstName;
-                database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName;
+                database.Command.CommandText = "tblEmailTypeINSERT";
+                database.Command.Parameters.Add("@Type", SqlDbType.VarChar).Value = _Type;
 
                 // Provides the empty buckets
                 base.Initialize(database, Guid.Empty);
-                database.ExecuteNonQueryWithTransaction();
+                database.ExecuteNonQuery();
 
                 // Unloads the full buckets into the object
                 base.Initialize(database.Command);
@@ -125,14 +73,13 @@ namespace BusinessObjects
             {
                 database.Command.Parameters.Clear();
                 database.Command.CommandType = CommandType.StoredProcedure;
-                database.Command.CommandText = "tblEmployeeUPDATE";
-                database.Command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = _FirstName;
-                database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName
-                    ;
+                database.Command.CommandText = "tblEmailTypeUPDATE";
+                database.Command.Parameters.Add("@Type", SqlDbType.VarChar).Value = _Type;
+                ;
 
                 // Provides the empty buckets
                 base.Initialize(database, base.Id);
-                database.ExecuteNonQueryWithTransaction();
+                database.ExecuteNonQuery();
 
                 // Unloads the full buckets into the object
                 base.Initialize(database.Command);
@@ -154,11 +101,11 @@ namespace BusinessObjects
             {
                 database.Command.Parameters.Clear();
                 database.Command.CommandType = CommandType.StoredProcedure;
-                database.Command.CommandText = "tblEmployee_DELETE";
+                database.Command.CommandText = "tblEmailTypeDELETE";
 
                 // Provides the empty buckets
                 base.Initialize(database, base.Id);
-                database.ExecuteNonQueryWithTransaction();
+                database.ExecuteNonQuery();
 
                 // Unloads the full buckets into the object
                 base.Initialize(database.Command);
@@ -175,19 +122,11 @@ namespace BusinessObjects
         {
             bool result = true;
 
-            if (_FirstName.Trim() == string.Empty)
+            if (_Type.Trim() == string.Empty || _Type == null)
             {
                 result = false;
             }
-            if (_LastName.Trim() == string.Empty)
-            {
-                result = false;
-            }
-            if (_FirstName.Length > 20)
-            {
-                result = false;
-            }
-            if (_LastName.Length > 20)
+            if (_Type.Length > 20 || _Type.Length < 4)
             {
                 result = false;
             }
@@ -198,12 +137,12 @@ namespace BusinessObjects
 
         #region Public Methods
 
-        public Employee GetById(Guid id)
+        private EmailType GetById(Guid id)
         {
             Database database = new Database("Employer");
             DataTable dt = new DataTable();
             database.Command.CommandType = CommandType.StoredProcedure;
-            database.Command.CommandText = "tblEmployee_GetId";
+            database.Command.CommandText = "tblEmailTypeGetId";
             base.Initialize(database, base.Id);
             dt = database.ExecuteQuery();
             if (dt != null && dt.Rows.Count == 1)
@@ -219,23 +158,21 @@ namespace BusinessObjects
         }
         public void InitializeBusinessData(DataRow dr)
         {
-            _FirstName = dr["Firstname"].ToString();
-            _LastName = dr["LastName"].ToString();
+            _Type = dr["Type"].ToString();
         }
         public bool IsSavable()
         {
             bool result = false;
-            if (base.IsDirty == true && IsValid() == true || (Phones.IsSavable() == true || _Emails.IsSavable() == true))
+            if (base.IsDirty == true && IsValid() == true)
             {
                 result = true;
             }
             return result;
         }
-        public Employee Save()
+        public EmailType Save()
         {
             bool result = true;
             Database database = new Database("Employer");
-            database.BeginTransaction();
             if (base.IsNew == true && IsSavable())
             {
                 result = Insert(database);
@@ -244,7 +181,7 @@ namespace BusinessObjects
             {
                 result = Delete(database);
             }
-            else if (base.IsNew == false && IsValid() == true && IsDirty == true)
+            else if (base.IsNew == false && IsSavable() == true)
             {
                 result = Update(database);
             }
@@ -252,23 +189,6 @@ namespace BusinessObjects
             {
                 base.IsDirty = false;
                 base.IsNew = false;
-            }
-            //SAVE THE CHILDREN
-            if (result == true && _Phones != null && _Phones.IsSavable() == true)
-            {
-                result = _Phones.Save(database, base.Id);
-            }
-            if (result == true && _Emails != null && _Emails.IsSavable() == true)
-            {
-                result = _Emails.Save(database, base.Id);
-            }
-            if (result == true)
-            {
-                database.EndTransaction();
-            }
-            else
-            {
-                database.RollBack();
             }
             return this;
         }

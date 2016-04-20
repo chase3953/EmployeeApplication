@@ -9,10 +9,11 @@ using System.ComponentModel;
 
 namespace BusinessObjects
 {
-    public class HobbyTypeList : Event
+    public class EmailTypeList : Event
     {
+
         #region Public Properties
-        public BindingList<HobbyType> List
+        public BindingList<EmailType> List
         {
             get
             {
@@ -22,14 +23,14 @@ namespace BusinessObjects
         #endregion
 
         #region Private Members
-        private BindingList<HobbyType> _List;
+        private BindingList<EmailType> _List;
 
         #endregion
 
         #region Construction
-        public HobbyTypeList()
+        public EmailTypeList()
         {
-            _List = new BindingList<HobbyType>();
+            _List = new BindingList<EmailType>();
             _List.AddingNew += _List_AddingNew;
         }
 
@@ -38,30 +39,32 @@ namespace BusinessObjects
         #endregion
 
         #region Public Methods
-        public HobbyTypeList GetAll()
+        public EmailTypeList GetAll()
         {
             Database database = new Database("Employer");
             database.Command.Parameters.Clear();
             database.Command.CommandType = System.Data.CommandType.StoredProcedure;
-            database.Command.CommandText = "tblHobbiesGetAll";
+            database.Command.CommandText = "tblEmailTypeGetAll";
             DataTable dt = database.ExecuteQuery();
-
+            EmailType blank = new EmailType();
+            blank.Type = "Select an Email Type";
+            _List.Add(blank);
             foreach (DataRow dr in dt.Rows)
             {
-                HobbyType e = new HobbyType();
+                EmailType e = new EmailType();
                 e.Initialize(dr);
                 e.InitializeBusinessData(dr);
                 e.IsNew = false;
                 e.IsDirty = false;
-                e.Savable += HobbyType_Savable;
+                e.Savable += EmailType_Savable;
                 _List.Add(e);
             }
 
             return this;
         }
-        public HobbyTypeList Save()
+        public EmailTypeList Save()
         {
-            foreach (HobbyType pt in _List)
+            foreach (EmailType pt in _List)
             {
                 if (pt.IsSavable() == true)
                 {
@@ -70,33 +73,20 @@ namespace BusinessObjects
             }
             return this;
         }
-        public bool IsSavable()
-        {
-            bool result = false;
-            foreach (HobbyType h in _List)
-            {
-                if (h.IsSavable() == true)
-                {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
         #endregion
 
         #region  Public Event Handlers
         private void _List_AddingNew(object sender, AddingNewEventArgs e)
         {
-            e.NewObject = new HobbyType();
-            HobbyType HobbyType = (HobbyType)e.NewObject;
-            HobbyType.Savable += HobbyType_Savable;
+            e.NewObject = new EmailType();
+            EmailType EmailType = (EmailType)e.NewObject;
+            EmailType.Savable += EmailType_Savable;
         }
 
-        private void HobbyType_Savable(SavableEventArgs e)
+        private void EmailType_Savable(SavableEventArgs e)
         {
             RaiseEvent(e);
-        }
+        }   
         #endregion
     }
 }

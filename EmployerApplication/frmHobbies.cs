@@ -14,7 +14,7 @@ namespace EmployerApplication
 {
     public partial class frmHobbies : Form
     {
-        HobbyTypeList el;
+        HobbyList el;
         public frmHobbies()
         {
             InitializeComponent();
@@ -47,7 +47,7 @@ namespace EmployerApplication
         private void frmHobbies_Load_1(object sender, EventArgs e)
         {
             dgvHobby.AutoGenerateColumns = false;
-            el = new HobbyTypeList();
+            el = new HobbyList();
             el.Savable += El_Savable;
             el = el.GetAll();
             dgvHobby.DataSource = el.List;

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
-using DatabaseHelper;
 using System.Data;
+using DatabaseHelper;
+using System.ComponentModel;
 
 namespace BusinessObjects
 {
-    public class EmployeeList : Event
+    public class HobbyList : Event
     {
         #region Public Properties
-        public BindingList<Employee> List
+        public BindingList<Hobby> List
         {
             get
             {
@@ -20,80 +20,80 @@ namespace BusinessObjects
             }
         }
         #endregion
-        
+
         #region Private Members
-        private BindingList<Employee> _List;
+        private BindingList<Hobby> _List;
 
         #endregion
-        
+
         #region Construction
-        public EmployeeList()
+        public HobbyList()
         {
-            _List = new BindingList<Employee>();
+            _List = new BindingList<Hobby>();
             _List.AddingNew += _List_AddingNew;
         }
 
-        
+
 
         #endregion
 
         #region Public Methods
-        public EmployeeList GetAll()
+        public HobbyList GetAll()
         {
             Database database = new Database("Employer");
             database.Command.Parameters.Clear();
             database.Command.CommandType = System.Data.CommandType.StoredProcedure;
-            database.Command.CommandText = "tblEmployeeGetAll";
+            database.Command.CommandText = "tblHobbiesGetAll";
             DataTable dt = database.ExecuteQuery();
-            
+
             foreach (DataRow dr in dt.Rows)
             {
-                Employee e = new Employee();
+                Hobby e = new Hobby();
                 e.Initialize(dr);
                 e.InitializeBusinessData(dr);
                 e.IsNew = false;
                 e.IsDirty = false;
-                e.Savable += Employee_Savable;
-                e.Phones.Savable += Phones_Savable;
-                e.Emails.Savable += Emails_Savable;
+                e.Savable += HobbyType_Savable;
                 _List.Add(e);
             }
 
             return this;
-        }       
-        public EmployeeList Save()
+        }
+        public HobbyList Save()
         {
-            foreach (Employee em in _List)
+            foreach (Hobby pt in _List)
             {
-                if (em.IsSavable() == true)
+                if (pt.IsSavable() == true)
                 {
-                    em.Save();
+                    pt.Save();
                 }
             }
             return this;
+        }
+        public bool IsSavable()
+        {
+            bool result = false;
+            foreach (Hobby h in _List)
+            {
+                if (h.IsSavable() == true)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
         #endregion
 
         #region  Public Event Handlers
         private void _List_AddingNew(object sender, AddingNewEventArgs e)
         {
-            e.NewObject = new Employee();
-            Employee employee = (Employee)e.NewObject;
-            employee.Savable += Employee_Savable;
-            employee.Phones.Savable += Phones_Savable;
-            
+            e.NewObject = new Hobby();
+            Hobby HobbyType = (Hobby)e.NewObject;
+            HobbyType.Savable += HobbyType_Savable;
         }
 
-        private void Employee_Savable(SavableEventArgs e)
-        {
-            RaiseEvent(e);
-        }
-
-        private void Phones_Savable(SavableEventArgs e)
-        {
-             RaiseEvent(e);
-        }
-        private void Emails_Savable(SavableEventArgs e)
+        private void HobbyType_Savable(SavableEventArgs e)
         {
             RaiseEvent(e);
         }

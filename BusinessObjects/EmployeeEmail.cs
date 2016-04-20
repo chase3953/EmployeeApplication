@@ -3,36 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessObjects;
 using System.Data;
 using DatabaseHelper;
 
 namespace BusinessObjects
 {
-    public class Employee : HeaderData
+    public class EmployeeEmail : HeaderData
     {
-        //
-        //Check the end of the Insert()
-        //
-
         #region Private Members
-        private String _FirstName = String.Empty;
-        private String _LastName = String.Empty;
-        private EmployeePhoneList _Phones = null;
-        private EmployeeEmailList _Emails = null;
+        private Guid _EmployeeId = Guid.Empty;
+        private String _Email = String.Empty;
+        private Guid _EmailTypeID = Guid.Empty;
         #endregion
 
         #region Public Properties
-        public String FirstName
+        public Guid EmployeeID
         {
             get
             {
-                return _FirstName;
+                return _EmployeeId;
             }
             set
             {
-                if (_FirstName != value)
+                if (_EmployeeId != value)
                 {
-                    _FirstName = value;
+                    _EmployeeId = value;
                     base.IsDirty = true;
                     bool Savable = IsSavable();
                     SavableEventArgs e = new SavableEventArgs(Savable);
@@ -40,17 +36,18 @@ namespace BusinessObjects
                 }
             }
         }
-        public String LastName
+
+        public Guid EmailTypeID
         {
             get
             {
-                return _LastName;
+                return _EmailTypeID;
             }
             set
             {
-                if (_LastName != value)
+                if (_EmailTypeID != value)
                 {
-                    _LastName = value;
+                    _EmailTypeID = value;
                     base.IsDirty = true;
                     bool Savable = IsSavable();
                     SavableEventArgs e = new SavableEventArgs(Savable);
@@ -58,30 +55,22 @@ namespace BusinessObjects
                 }
             }
         }
-        public EmployeePhoneList Phones
+        public String Email
         {
             get
             {
-                //LAZY LOADING
-                if (_Phones == null)
-                {
-                    _Phones = new EmployeePhoneList();
-                    _Phones = _Phones.GetByEmployeeId(base.Id);
-                }
-                return _Phones;
+                return _Email;
             }
-        }
-        public EmployeeEmailList Emails
-        {
-            get
+            set
             {
-                //LAZY LOADING
-                if (_Emails == null)
+                if (_Email != value)
                 {
-                    _Emails = new EmployeeEmailList();
-                    _Emails = _Emails.GetByEmployeeId(base.Id);
+                    _Email = value;
+                    base.IsDirty = true;
+                    bool Savable = IsSavable();
+                    SavableEventArgs e = new SavableEventArgs(Savable);
+                    RaiseEvent(e);
                 }
-                return _Emails;
             }
         }
         #endregion
@@ -96,9 +85,10 @@ namespace BusinessObjects
             {
                 database.Command.Parameters.Clear();
                 database.Command.CommandType = CommandType.StoredProcedure;
-                database.Command.CommandText = "tblEmployeeINSERT";
-                database.Command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = _FirstName;
-                database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName;
+                database.Command.CommandText = "tblEmployeeEmailINSERT";
+                database.Command.Parameters.Add("@EmployeeId", SqlDbType.UniqueIdentifier).Value = _EmployeeId;
+                database.Command.Parameters.Add("@Email", SqlDbType.VarChar).Value = _Email;
+                database.Command.Parameters.Add("@EmailTypeId", SqlDbType.UniqueIdentifier).Value = _EmailTypeID;
 
                 // Provides the empty buckets
                 base.Initialize(database, Guid.Empty);
@@ -125,10 +115,11 @@ namespace BusinessObjects
             {
                 database.Command.Parameters.Clear();
                 database.Command.CommandType = CommandType.StoredProcedure;
-                database.Command.CommandText = "tblEmployeeUPDATE";
-                database.Command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = _FirstName;
-                database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName
-                    ;
+                database.Command.CommandText = "tblEmployeeEmailUPDATE";
+                database.Command.Parameters.Add("@EmployeeId", SqlDbType.UniqueIdentifier).Value = _EmployeeId;
+                database.Command.Parameters.Add("@Email", SqlDbType.VarChar).Value = _Email;
+                database.Command.Parameters.Add("@EmailTypeId", SqlDbType.UniqueIdentifier).Value = _EmailTypeID;
+
 
                 // Provides the empty buckets
                 base.Initialize(database, base.Id);
@@ -154,7 +145,7 @@ namespace BusinessObjects
             {
                 database.Command.Parameters.Clear();
                 database.Command.CommandType = CommandType.StoredProcedure;
-                database.Command.CommandText = "tblEmployee_DELETE";
+                database.Command.CommandText = "tblEmployeeEmailDELETE";
 
                 // Provides the empty buckets
                 base.Initialize(database, base.Id);
@@ -175,19 +166,19 @@ namespace BusinessObjects
         {
             bool result = true;
 
-            if (_FirstName.Trim() == string.Empty)
+            if (_Email.Trim() == string.Empty || _Email.Trim() == string.Empty)
             {
                 result = false;
             }
-            if (_LastName.Trim() == string.Empty)
+            if (_EmailTypeID == Guid.Empty || _EmailTypeID == null)
             {
                 result = false;
             }
-            if (_FirstName.Length > 20)
+            if (_EmailTypeID == null || _EmailTypeID == Guid.Empty)
             {
                 result = false;
             }
-            if (_LastName.Length > 20)
+            if (_Email.Length > 20)
             {
                 result = false;
             }
@@ -198,12 +189,12 @@ namespace BusinessObjects
 
         #region Public Methods
 
-        public Employee GetById(Guid id)
+        public EmployeeEmail GetById(Guid id)
         {
             Database database = new Database("Employer");
             DataTable dt = new DataTable();
             database.Command.CommandType = CommandType.StoredProcedure;
-            database.Command.CommandText = "tblEmployee_GetId";
+            database.Command.CommandText = "tblEmployeeEmailGetId";
             base.Initialize(database, base.Id);
             dt = database.ExecuteQuery();
             if (dt != null && dt.Rows.Count == 1)
@@ -219,23 +210,24 @@ namespace BusinessObjects
         }
         public void InitializeBusinessData(DataRow dr)
         {
-            _FirstName = dr["Firstname"].ToString();
-            _LastName = dr["LastName"].ToString();
+            _EmployeeId = (Guid)dr["EmployeeId"];
+            _EmailTypeID = (Guid)dr["EmailTypeID"];
+            _Email = dr["Email"].ToString();
         }
         public bool IsSavable()
         {
             bool result = false;
-            if (base.IsDirty == true && IsValid() == true || (Phones.IsSavable() == true || _Emails.IsSavable() == true))
+            if (base.IsDirty == true && IsValid() == true)
             {
                 result = true;
             }
             return result;
         }
-        public Employee Save()
+        public EmployeeEmail Save(Database database, Guid parentId)
         {
+            _EmployeeId = parentId;
             bool result = true;
-            Database database = new Database("Employer");
-            database.BeginTransaction();
+            //Database database = new Database("Employer");
             if (base.IsNew == true && IsSavable())
             {
                 result = Insert(database);
@@ -244,7 +236,7 @@ namespace BusinessObjects
             {
                 result = Delete(database);
             }
-            else if (base.IsNew == false && IsValid() == true && IsDirty == true)
+            else if (base.IsNew == false && IsSavable() == true)
             {
                 result = Update(database);
             }
@@ -252,23 +244,6 @@ namespace BusinessObjects
             {
                 base.IsDirty = false;
                 base.IsNew = false;
-            }
-            //SAVE THE CHILDREN
-            if (result == true && _Phones != null && _Phones.IsSavable() == true)
-            {
-                result = _Phones.Save(database, base.Id);
-            }
-            if (result == true && _Emails != null && _Emails.IsSavable() == true)
-            {
-                result = _Emails.Save(database, base.Id);
-            }
-            if (result == true)
-            {
-                database.EndTransaction();
-            }
-            else
-            {
-                database.RollBack();
             }
             return this;
         }
@@ -283,8 +258,10 @@ namespace BusinessObjects
         #endregion
 
         #region Construction
+        public EmployeeEmail()
+        {
 
+        }
         #endregion
-
     }
 }

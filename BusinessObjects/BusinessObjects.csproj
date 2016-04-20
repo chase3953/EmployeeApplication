@@ -42,14 +42,18 @@
   <ItemGroup>
     <Compile Include="Department.cs" />
     <Compile Include="DepartmentList.cs" />
+    <Compile Include="EmailType.cs" />
+    <Compile Include="EmailTypeList.cs" />
     <Compile Include="Employee.cs" />
+    <Compile Include="EmployeeEmail.cs" />
+    <Compile Include="EmployeeEmailList.cs" />
     <Compile Include="EmployeeList.cs" />
     <Compile Include="EmployeePhone.cs" />
     <Compile Include="EmployeePhoneList.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="HeaderData.cs" />
-    <Compile Include="HobbyType.cs" />
-    <Compile Include="HobbyTypeList.cs" />
+    <Compile Include="Hobby.cs" />
+    <Compile Include="HobbyList.cs" />
     <Compile Include="PhoneType.cs" />
     <Compile Include="PhoneTypeList.cs" />
     <Compile Include="PositionType.cs" />

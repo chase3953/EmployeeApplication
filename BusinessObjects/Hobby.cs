@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BusinessObjects;
 using System.Data;
 using DatabaseHelper;
 
 namespace BusinessObjects
 { 
-    public class HobbyType : HeaderData
+    public class Hobby : HeaderData
     {
         #region Private Members
+        private Guid _EmployeeId = Guid.Empty;
         private String _HobbyName = String.Empty;
         #endregion
 
         #region Public Properties
-        public string Hobbies
+        public string HobbyName
         {
             get
             {
@@ -33,7 +35,6 @@ namespace BusinessObjects
                 }
             }
         }
-               
         #endregion
 
         #region Private Methods
@@ -137,7 +138,7 @@ namespace BusinessObjects
 
         #region Public Methods
 
-        private HobbyType GetById(Guid id)
+        private Hobby GetById(Guid id)
         {
             Database database = new Database("Employer");
             DataTable dt = new DataTable();
@@ -169,7 +170,7 @@ namespace BusinessObjects
             }
             return result;
         }
-        public HobbyType Save()
+        public Hobby Save()
         {
             bool result = true;
             Database database = new Database("Employer");

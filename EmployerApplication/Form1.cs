@@ -15,6 +15,9 @@ namespace EmployerApplication
     {
         EmployeeList el;
         PhoneTypeList phoneTypes;
+        EmailTypeList emailTypes;
+        HobbyList hobbyList;
+
         public Form1()
         {
             InitializeComponent();
@@ -23,14 +26,34 @@ namespace EmployerApplication
         {
             phoneTypes = new PhoneTypeList();
             phoneTypes = phoneTypes.GetAll();
+            emailTypes = new EmailTypeList();
+            emailTypes = emailTypes.GetAll();
+            hobbyList = new HobbyList();
+            hobbyList.GetAll();
             dgvEmployeePhones.CellFormatting += DgvEmployeePhones_CellFormatting;
+            dgvEmployeeEmail.CellFormatting += DgvEmployeeEmail_CellFormatting;
             dgvEmployeePhones.DataError += DgvEmployeePhones_DataError;
+            dgvEmployeeEmail.DataError += DgvEmployeeEmail_DataError;
             dgvEmployee.AutoGenerateColumns = false;
             el = new EmployeeList();
             dgvEmployeePhones.AutoGenerateColumns = false;
+            dgvEmployeeEmail.AutoGenerateColumns = false;
             el.Savable += El_Savable;
             mnuSave.Enabled = false;
             dgvEmployee.RowHeaderMouseDoubleClick += DgvEmployee_RowHeaderMouseDoubleClick;
+        }
+
+        private void DgvEmployeeEmail_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            
+        }
+
+        private void DgvEmployeeEmail_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                PopulateEmailTypes((DataGridViewComboBoxColumn)dgvEmployeeEmail.Columns[e.ColumnIndex]);
+            }
         }
 
         private void DgvEmployeePhones_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -52,6 +75,18 @@ namespace EmployerApplication
                 }
             }
         }
+        private void PopulateEmailTypes(DataGridViewComboBoxColumn column)
+        {
+            var c = column;
+            {
+                if (c.DataSource == null)
+                {
+                    c.DisplayMember = "Type";
+                    c.ValueMember = "Id";
+                    c.DataSource = emailTypes.List;
+                }
+            }
+        }
 
         private void DgvEmployeePhones_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
@@ -62,6 +97,9 @@ namespace EmployerApplication
         {
             Employee employee = (Employee)dgvEmployee.Rows[e.RowIndex].DataBoundItem;
             dgvEmployeePhones.DataSource = employee.Phones.List;
+            dgvEmployeeEmail.DataSource = employee.Emails.List;
+                      
+            
         }
 
         private void El_Savable(SavableEventArgs e)
@@ -97,6 +135,11 @@ namespace EmployerApplication
         }
 
         private void mnuEmployeeName_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
         {
 
         }
