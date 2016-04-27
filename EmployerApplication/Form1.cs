@@ -16,7 +16,9 @@ namespace EmployerApplication
         EmployeeList el;
         PhoneTypeList phoneTypes;
         EmailTypeList emailTypes;
-        HobbyList hobbyList;
+        Employee employee;
+
+
 
         public Form1()
         {
@@ -28,8 +30,11 @@ namespace EmployerApplication
             phoneTypes = phoneTypes.GetAll();
             emailTypes = new EmailTypeList();
             emailTypes = emailTypes.GetAll();
+            HobbyList hobbyList;
             hobbyList = new HobbyList();
             hobbyList.GetAll();
+            LoadHobbies(hobbyList);
+
             dgvEmployeePhones.CellFormatting += DgvEmployeePhones_CellFormatting;
             dgvEmployeeEmail.CellFormatting += DgvEmployeeEmail_CellFormatting;
             dgvEmployeePhones.DataError += DgvEmployeePhones_DataError;
@@ -41,6 +46,60 @@ namespace EmployerApplication
             el.Savable += El_Savable;
             mnuSave.Enabled = false;
             dgvEmployee.RowHeaderMouseDoubleClick += DgvEmployee_RowHeaderMouseDoubleClick;
+        }
+
+        private void LoadHobbies(HobbyList Hobbies)
+        {
+            foreach (Hobby hobby in Hobbies.List)
+            {
+                CheckBox cb = new CheckBox();
+                cb.CheckStateChanged += Cb_CheckStateChanged;
+                cb.Text = hobby.HobbyName;
+                cb.Tag = hobby.Id;
+                cb.AutoSize = true;
+                this.flpHobby.Controls.Add(cb);
+            }
+        }
+
+        private void UnSubscribeStateChanged()
+        {
+            foreach (CheckBox cb in flpHobby.Controls)
+            {
+                cb.CheckedChanged -= Cb_CheckStateChanged;
+            }
+        }
+
+        private void SubscribeStateChanged()
+        {
+            foreach (CheckBox cb in flpHobby.Controls)
+            {
+                cb.CheckedChanged += Cb_CheckStateChanged;
+            }
+        }
+
+        private void Cb_CheckStateChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            if (cb.Checked == true)
+            {
+                EmployeeHobby eh = new EmployeeHobby();
+                eh.EmployeeID = employee.Id;
+                eh.HobbyID = (Guid)cb.Tag;
+                employee.HobbyName.List.Add(eh);
+                employee.Save();
+            }
+            else
+            {
+                foreach (EmployeeHobby eh in employee.HobbyName.List)
+                {
+                    if (eh.HobbyID == (Guid)cb.Tag)
+                    {
+                        eh.Deleted = true;
+                        employee.Save();
+                        break;
+                    }
+                }
+            }
         }
 
         private void DgvEmployeeEmail_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -95,11 +154,26 @@ namespace EmployerApplication
 
         private void DgvEmployee_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            Employee employee = (Employee)dgvEmployee.Rows[e.RowIndex].DataBoundItem;
+            employee = (Employee)dgvEmployee.Rows[e.RowIndex].DataBoundItem;
             dgvEmployeePhones.DataSource = employee.Phones.List;
             dgvEmployeeEmail.DataSource = employee.Emails.List;
-                      
-            
+            UnSubscribeStateChanged();
+            SetEmployeeHobbies();
+            SubscribeStateChanged();
+        }
+
+        private void SetEmployeeHobbies()
+        {
+            for (int j = 0; j < employee.HobbyName.List.Count-1; j++)
+            {
+                for (int i = 0; i < flpHobby.Controls.Count-1; i++)
+                {
+                    if ((Guid)flpHobby.Controls[i].Tag == employee.HobbyName.List[j].HobbyID)
+                    {
+                        ((CheckBox)flpHobby.Controls[i]).Checked = true;
+                    }
+                }
+            } 
         }
 
         private void El_Savable(SavableEventArgs e)
@@ -107,10 +181,6 @@ namespace EmployerApplication
             this.mnuSave.Enabled = e.Savable;
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void mnuSave_Click(object sender, EventArgs e)
         {
@@ -129,17 +199,7 @@ namespace EmployerApplication
             dgvEmployee.DataSource = el.List;
         }
 
-        private void dgvEmployee_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void mnuEmployeeName_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        private void gbHobby_Enter(object sender, EventArgs e)
         {
 
         }

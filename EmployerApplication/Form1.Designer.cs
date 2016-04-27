@@ -48,7 +48,7 @@
             this.EmployeeEmail = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EmailType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.tabHobby = new System.Windows.Forms.TabPage();
-            this.gbHobby = new System.Windows.Forms.GroupBox();
+            this.flpHobby = new System.Windows.Forms.FlowLayoutPanel();
             this.mnuEmployeeName.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabSEARCH.SuspendLayout();
@@ -70,7 +70,6 @@
             this.mnuEmployeeName.Size = new System.Drawing.Size(808, 24);
             this.mnuEmployeeName.TabIndex = 1;
             this.mnuEmployeeName.Text = "menuStrip1";
-            this.mnuEmployeeName.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mnuEmployeeName_ItemClicked);
             // 
             // toolStripMenuItem1
             // 
@@ -152,7 +151,6 @@
             this.dgvEmployee.Name = "dgvEmployee";
             this.dgvEmployee.Size = new System.Drawing.Size(794, 331);
             this.dgvEmployee.TabIndex = 1;
-            this.dgvEmployee.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvEmployee_CellContentClick);
             // 
             // colFirstName
             // 
@@ -223,7 +221,6 @@
             this.dgvEmployeeEmail.Name = "dgvEmployeeEmail";
             this.dgvEmployeeEmail.Size = new System.Drawing.Size(794, 331);
             this.dgvEmployeeEmail.TabIndex = 0;
-            this.dgvEmployeeEmail.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick_1);
             // 
             // EmployeeEmail
             // 
@@ -241,24 +238,24 @@
             // 
             // tabHobby
             // 
-            this.tabHobby.Controls.Add(this.gbHobby);
+            this.tabHobby.Controls.Add(this.flpHobby);
             this.tabHobby.Location = new System.Drawing.Point(4, 22);
             this.tabHobby.Name = "tabHobby";
             this.tabHobby.Padding = new System.Windows.Forms.Padding(3);
             this.tabHobby.Size = new System.Drawing.Size(800, 337);
             this.tabHobby.TabIndex = 4;
-            this.tabHobby.Text = "Employee Hobbies";
+            this.tabHobby.Text = "Hobbies";
             this.tabHobby.UseVisualStyleBackColor = true;
             // 
-            // gbHobby
+            // flpHobby
             // 
-            this.gbHobby.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbHobby.Location = new System.Drawing.Point(3, 3);
-            this.gbHobby.Name = "gbHobby";
-            this.gbHobby.Size = new System.Drawing.Size(794, 331);
-            this.gbHobby.TabIndex = 0;
-            this.gbHobby.TabStop = false;
-            this.gbHobby.Text = "Hobbies";
+            this.flpHobby.AutoSize = true;
+            this.flpHobby.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flpHobby.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flpHobby.Location = new System.Drawing.Point(3, 3);
+            this.flpHobby.Name = "flpHobby";
+            this.flpHobby.Size = new System.Drawing.Size(794, 331);
+            this.flpHobby.TabIndex = 0;
             // 
             // Form1
             // 
@@ -282,6 +279,7 @@
             this.tabEmployeeEmail.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmployeeEmail)).EndInit();
             this.tabHobby.ResumeLayout(false);
+            this.tabHobby.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,6 +307,7 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn EmailType;
         private System.Windows.Forms.TabPage tabHobby;
         private System.Windows.Forms.GroupBox gbHobby;
+        private System.Windows.Forms.FlowLayoutPanel flpHobby;
     }
 }
 

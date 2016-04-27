@@ -47,6 +47,8 @@
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeEmail.cs" />
     <Compile Include="EmployeeEmailList.cs" />
+    <Compile Include="EmployeeHobby.cs" />
+    <Compile Include="EmployeeHobbyList.cs" />
     <Compile Include="EmployeeList.cs" />
     <Compile Include="EmployeePhone.cs" />
     <Compile Include="EmployeePhoneList.cs" />
