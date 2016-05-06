@@ -17,9 +17,12 @@ namespace BusinessObjects
         #region Private Members
         private String _FirstName = String.Empty;
         private String _LastName = String.Empty;
+        private Guid _DepartmentId = Guid.Empty;
         private EmployeePhoneList _Phones = null;
         private EmployeeEmailList _Emails = null;
         private EmployeeHobbyList _Hobbies = null;
+        private EmployeeSubordinateList _Subordinates;
+        private EmployeeFamilyList _Family;
         #endregion
 
         #region Public Properties
@@ -59,6 +62,40 @@ namespace BusinessObjects
                 }
             }
         }
+
+        public string FullName
+        { get { return string.Concat(_FirstName, " ", _LastName); } }
+
+        public Guid DepartmentId
+        {
+            get { return _DepartmentId;}
+            set
+            {
+                if (_DepartmentId != value)
+                {
+                    _DepartmentId = value;
+                    base.IsDirty = true;
+                    bool Savable = IsSavable();
+                    SavableEventArgs e = new SavableEventArgs(Savable);
+                    RaiseEvent(e);
+                }
+            }
+        }
+
+        public EmployeeSubordinateList Subordinates
+        {
+            get
+            {
+                //LAZY LOADING
+                if (_Subordinates == null)
+                {
+                    _Subordinates = new EmployeeSubordinateList();
+                    _Subordinates = _Subordinates.GetByEmployeeId(base.Id);
+                }
+                return _Subordinates;
+            }
+        }    
+
         public EmployeePhoneList Phones
         {
             get
@@ -98,6 +135,20 @@ namespace BusinessObjects
                 return _Hobbies;
             }
         }
+
+        public EmployeeFamilyList Family
+        {
+            get
+            {
+                //LAZY LOADING
+                if (_Family == null)
+                {
+                    _Family = new EmployeeFamilyList();
+                    _Family = _Family.GetByEmployeeId(base.Id);
+                }
+                return _Family;
+            }
+        }
         #endregion
 
         #region Private Methods
@@ -113,6 +164,7 @@ namespace BusinessObjects
                 database.Command.CommandText = "tblEmployeeINSERT";
                 database.Command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = _FirstName;
                 database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName;
+                database.Command.Parameters.Add("@DepartmentId", SqlDbType.UniqueIdentifier).Value = _DepartmentId;
 
                 // Provides the empty buckets
                 base.Initialize(database, Guid.Empty);
@@ -141,8 +193,8 @@ namespace BusinessObjects
                 database.Command.CommandType = CommandType.StoredProcedure;
                 database.Command.CommandText = "tblEmployeeUPDATE";
                 database.Command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = _FirstName;
-                database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName
-                    ;
+                database.Command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = _LastName;
+                database.Command.Parameters.Add("@DepartmentId", SqlDbType.UniqueIdentifier).Value = _DepartmentId;
 
                 // Provides the empty buckets
                 base.Initialize(database, base.Id);
@@ -205,6 +257,10 @@ namespace BusinessObjects
             {
                 result = false;
             }
+            if (_DepartmentId == Guid.Empty)
+            {
+                result = false;
+            }
             return result;
         }
 
@@ -217,8 +273,9 @@ namespace BusinessObjects
             Database database = new Database("Employer");
             DataTable dt = new DataTable();
             database.Command.CommandType = CommandType.StoredProcedure;
-            database.Command.CommandText = "tblEmployee_GetId";
-            base.Initialize(database, id);
+            database.Command.CommandText = "tblEmployeeGetById";
+            database.Command.Parameters.Add("@Id", SqlDbType.UniqueIdentifier).Value = id;
+            //base.Initialize(database, id);
             dt = database.ExecuteQuery();
             if (dt != null && dt.Rows.Count == 1)
             {
@@ -235,12 +292,17 @@ namespace BusinessObjects
         {
             _FirstName = dr["Firstname"].ToString();
             _LastName = dr["LastName"].ToString();
+            _DepartmentId = (Guid) dr["DepartmentId"];
         }
         public bool IsSavable()
         {
             bool result = false;
-            if (base.IsDirty == true && IsValid() == true || Phones.IsSavable() == true
-                || _Emails.IsSavable() == true || _Hobbies.IsSavable())
+            if (base.IsDirty == true && IsValid() == true 
+                ||(_Phones != null && _Phones.IsSavable()) == true
+                ||(_Emails != null && _Emails.IsSavable() == true) 
+                ||(_Hobbies != null && _Hobbies.IsSavable() == true
+                || (_Family != null && _Family.IsSavable() == true
+                ||(_Subordinates != null && _Subordinates.IsSavable()))))
             {
                 result = true;
             }
@@ -269,6 +331,14 @@ namespace BusinessObjects
                 base.IsNew = false;
             }
             //SAVE THE CHILDREN
+            if (result == true && _Family != null && _Family.IsSavable() == true)
+            {
+                result = _Family.Save(database, base.Id);
+            }
+            if (result == true && _Subordinates != null && _Subordinates.IsSavable() == true)
+            {
+                result = _Subordinates.Save(database, base.Id);
+            }
             if (result == true && _Phones != null && _Phones.IsSavable() == true)
             {
                 result = _Phones.Save(database, base.Id);

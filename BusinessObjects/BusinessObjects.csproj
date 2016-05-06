@@ -47,11 +47,15 @@
     <Compile Include="Employee.cs" />
     <Compile Include="EmployeeEmail.cs" />
     <Compile Include="EmployeeEmailList.cs" />
+    <Compile Include="EmployeeFamily.cs" />
+    <Compile Include="EmployeeFamilyList.cs" />
     <Compile Include="EmployeeHobby.cs" />
     <Compile Include="EmployeeHobbyList.cs" />
     <Compile Include="EmployeeList.cs" />
     <Compile Include="EmployeePhone.cs" />
     <Compile Include="EmployeePhoneList.cs" />
+    <Compile Include="EmployeeSubordinate.cs" />
+    <Compile Include="EmployeeSubordinateList.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="HeaderData.cs" />
     <Compile Include="Hobby.cs" />

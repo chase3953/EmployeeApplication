@@ -58,16 +58,19 @@ namespace BusinessObjects
             database.Command.CommandType = System.Data.CommandType.StoredProcedure;
             database.Command.CommandText = "tblDepartmentGetAll";
             DataTable dt = database.ExecuteQuery();
+            Department blank = new Department();
+            blank.Name = "Select a Department";
+            _List.Add(blank);
 
             foreach (DataRow dr in dt.Rows)
             {
-                Department e = new Department();
-                e.Initialize(dr);
-                e.InitializeBusinessData(dr);
-                e.IsNew = false;
-                e.IsDirty = false;
-                e.Savable += Department_Savable;
-                _List.Add(e);
+                Department d = new Department();
+                d.Initialize(dr);
+                d.InitializeBusinessData(dr);
+                d.IsNew = false;
+                d.IsDirty = false;
+                d.Savable += Department_Savable;
+                _List.Add(d);
             }
 
             return this;

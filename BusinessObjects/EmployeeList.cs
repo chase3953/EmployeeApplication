@@ -33,11 +33,37 @@ namespace BusinessObjects
             _List.AddingNew += _List_AddingNew;
         }
 
-        
+
 
         #endregion
 
         #region Public Methods
+        public EmployeeList GetByDepartmentId(Guid departmentId)
+        {
+            Database database = new Database("Employer");
+            database.Command.Parameters.Clear();
+            database.Command.CommandType = System.Data.CommandType.StoredProcedure;
+            database.Command.CommandText = "tblEmployeeGetByDepartmentId";
+            database.Command.Parameters.Add("@DepartmentId", SqlDbType.UniqueIdentifier).Value = departmentId;
+            DataTable dt = database.ExecuteQuery();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                Employee e = new Employee();
+                e.Initialize(dr);
+                e.InitializeBusinessData(dr);
+                e.IsNew = false;
+                e.IsDirty = false;
+                e.Savable += Employee_Savable;
+                e.Phones.Savable += Phones_Savable;
+                e.Emails.Savable += Emails_Savable;
+                e.Subordinates.Savable += Subordinates_Savable;
+                _List.Add(e);
+            }
+
+            return this;
+        }
+
         public EmployeeList GetAll()
         {
             Database database = new Database("Employer");
@@ -56,11 +82,16 @@ namespace BusinessObjects
                 e.Savable += Employee_Savable;
                 e.Phones.Savable += Phones_Savable;
                 e.Emails.Savable += Emails_Savable;
+                e.Subordinates.Savable += Subordinates_Savable;
+                e.Family.Savable += Family_Savable;
                 _List.Add(e);
             }
 
             return this;
-        }       
+        }
+
+        
+
         public EmployeeList Save()
         {
             foreach (Employee em in _List)
@@ -81,7 +112,13 @@ namespace BusinessObjects
             Employee employee = (Employee)e.NewObject;
             employee.Savable += Employee_Savable;
             employee.Phones.Savable += Phones_Savable;
+            employee.Subordinates.Savable += Subordinates_Savable;
             
+        }
+
+        private void Subordinates_Savable(SavableEventArgs e)
+        {
+            RaiseEvent(e);
         }
 
         private void Employee_Savable(SavableEventArgs e)
@@ -94,6 +131,10 @@ namespace BusinessObjects
              RaiseEvent(e);
         }
         private void Emails_Savable(SavableEventArgs e)
+        {
+            RaiseEvent(e);
+        }
+        private void Family_Savable(SavableEventArgs e)
         {
             RaiseEvent(e);
         }
